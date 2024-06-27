@@ -1,36 +1,42 @@
 import { Table } from 'antd'
+import type { TableColumnsType } from 'antd'
+import { prefixes } from './ip-ranges.json'
 import './App.css'
 
 function App() {
-  const dataSource = [
+  const dataSource = prefixes.map((value, index) => Object.assign(value, { key: index }))
+  const regionArray: string[] = []
+  const serviceArray: string[] = []
+  for (var i = 0; i < prefixes.length; i++) {
+    if (!regionArray.includes(prefixes[i].region)) {
+      regionArray.push(prefixes[i].region)
+    }
+    if (!serviceArray.includes(prefixes[i].service)) {
+      serviceArray.push(prefixes[i].service)
+    }
+  }
+  const regionFilters = regionArray.sort().map(value => ({ text: value, value }))
+  const serviceFilters = serviceArray.sort().map(value => ({ text: value, value }))
+  const columns: TableColumnsType = [
     {
-      key: '1',
-      name: '胡彦斌',
-      age: 32,
-      address: '西湖区湖底公园1号',
+      title: 'IP',
+      dataIndex: 'ip_prefix',
     },
     {
-      key: '2',
-      name: '胡彦祖',
-      age: 42,
-      address: '西湖区湖底公园1号',
-    },
-  ]
-  const columns = [
-    {
-      title: '姓名',
-      dataIndex: 'name',
-      key: 'name',
+      title: 'Region',
+      dataIndex: 'region',
+      filters: regionFilters,
+      onFilter: (value, record) => record.region.indexOf(value as string) === 0,
     },
     {
-      title: '年龄',
-      dataIndex: 'age',
-      key: 'age',
+      title: 'Service',
+      dataIndex: 'service',
+      filters: serviceFilters,
+      onFilter: (value, record) => record.service.indexOf(value as string) === 0,
     },
     {
-      title: '住址',
-      dataIndex: 'address',
-      key: 'address',
+      title: 'Group',
+      dataIndex: 'network_border_group',
     },
   ]
   return (
